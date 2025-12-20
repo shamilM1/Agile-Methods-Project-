@@ -5,6 +5,7 @@ from enum import Enum
 
 
 class TransactionType(str, Enum):
+    """Transaction type: income adds to balance, expense subtracts."""
     INCOME = "income"
     EXPENSE = "expense"
 

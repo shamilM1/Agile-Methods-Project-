@@ -1,16 +1,15 @@
-from sqlalchemy import Column, Integer, Float, String, DateTime, Enum
+from sqlalchemy import Column, Integer, Float, String, DateTime
 from sqlalchemy.sql import func
-import enum
 from app.database import Base
 
 
-class TransactionType(str, enum.Enum):
-    INCOME = "income"
-    EXPENSE = "expense"
-
-
 class Transaction(Base):
-    """Transaction model for wallet operations."""
+    """
+    Transaction model for wallet operations.
+    
+    MVP-W1: Stores income and expense transactions.
+    Balance is calculated as: sum(income) - sum(expenses)
+    """
     
     __tablename__ = "transactions"
 

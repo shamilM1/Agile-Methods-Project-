@@ -1,10 +1,17 @@
+/**
+ * MVP-W1: View Wallet Balance - Styles
+ * MVP-W2: Add Money to Wallet (Income) - NEW STYLES
+ */
+
 .app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* Header */
+/* ========================================
+   HEADER
+   ======================================== */
 .header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -20,6 +27,7 @@
   font-weight: 600;
 }
 
+/* API Connection Status Badge */
 .health-badge {
   padding: 0.5rem 1rem;
   border-radius: 20px;
@@ -39,7 +47,9 @@
   border: 1px solid #f56565;
 }
 
-/* Main Content */
+/* ========================================
+   MAIN CONTENT
+   ======================================== */
 .main {
   flex: 1;
   padding: 2rem;
@@ -48,7 +58,28 @@
   width: 100%;
 }
 
-/* Balance Card */
+/* ========================================
+   SUCCESS MESSAGE - MVP-W2
+   ======================================== */
+.success-message {
+  background-color: #c6f6d5;
+  color: #276749;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-weight: 500;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========================================
+   BALANCE CARD
+   ======================================== */
 .balance-card {
   background: white;
   border-radius: 16px;
@@ -82,7 +113,9 @@
   margin-left: 0.5rem;
 }
 
-/* Loading State */
+/* ========================================
+   LOADING STATE
+   ======================================== */
 .loading {
   padding: 2rem;
 }
@@ -103,7 +136,9 @@
   }
 }
 
-/* Error State */
+/* ========================================
+   ERROR STATE
+   ======================================== */
 .error {
   background-color: #fff5f5;
   color: #c53030;
@@ -116,7 +151,33 @@
   margin-bottom: 1rem;
 }
 
-/* Buttons */
+/* ========================================
+   ACTION BUTTONS - MVP-W2
+   ======================================== */
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.add-income-btn {
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  font-weight: 500;
+}
+
+.add-income-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+}
+
 .refresh-btn,
 .retry-btn {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -135,7 +196,145 @@
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
-/* Info Card */
+/* ========================================
+   MODAL - MVP-W2 Income Form
+   ======================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-in;
+}
+
+.modal {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal h2 {
+  color: #2d3748;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+/* ========================================
+   FORM STYLES - MVP-W2
+   ======================================== */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  color: #4a5568;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.input-with-currency {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-currency input {
+  padding-right: 3.5rem;
+}
+
+.currency-label {
+  position: absolute;
+  right: 1rem;
+  color: #718096;
+  font-weight: 500;
+}
+
+/* Form Error */
+.form-error {
+  background-color: #fff5f5;
+  color: #c53030;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+/* Form Buttons */
+.form-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.cancel-btn {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e2e8f0;
+  background: white;
+  color: #4a5568;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cancel-btn:hover {
+  background-color: #f7fafc;
+}
+
+.submit-btn {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  color: white;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+}
+
+.submit-btn:disabled,
+.cancel-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ========================================
+   INFO CARD
+   ======================================== */
 .info-card {
   background: white;
   border-radius: 16px;
@@ -159,7 +358,9 @@
   overflow-x: auto;
 }
 
-/* Footer */
+/* ========================================
+   FOOTER
+   ======================================== */
 .footer {
   background-color: #2d3748;
   color: #a0aec0;

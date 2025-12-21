@@ -56,6 +56,7 @@ function App() {
       const data = await response.json()
       setBalance(data)
     } catch (err) {
+      // MVP-W1: Show friendly error state if API call fails
       setError('Could not connect to the server. Please make sure the backend is running.')
       console.error('Error fetching balance:', err)
     } finally {
@@ -219,6 +220,7 @@ function App() {
         <section className="balance-card">
           <h2>Current Balance</h2>
           
+          {/* MVP-W1: Show loading state while fetching */}
           {loading && (
             <div className="loading">
               <div className="spinner"></div>
@@ -226,6 +228,7 @@ function App() {
             </div>
           )}
 
+          {/* MVP-W1: Show friendly error state if API call fails */}
           {error && (
             <div className="error">
               <p>⚠️ {error}</p>
@@ -235,6 +238,7 @@ function App() {
             </div>
           )}
 
+          {/* MVP-W1: Display balance in a large, clear component */}
           {!loading && !error && balance && (
             <div className="balance-display">
               <span className="amount">

@@ -97,12 +97,13 @@
   margin-bottom: 1rem;
 }
 
+/* MVP-W1: Display balance in a large, clear component */
 .balance-display {
   margin: 1.5rem 0;
 }
 
 .amount {
-  font-size: 3.5rem;
+  font-size: 3.5rem;  /* Large, clear display */
   font-weight: 700;
   color: #2d3748;
 }

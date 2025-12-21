@@ -1,10 +1,18 @@
+/**
+ * MVP-W1: View Wallet Balance - Styles
+ * 
+ * Implements the visual design for the wallet dashboard
+ */
+
 .app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* Header */
+/* ========================================
+   HEADER
+   ======================================== */
 .header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -20,6 +28,7 @@
   font-weight: 600;
 }
 
+/* API Connection Status Badge */
 .health-badge {
   padding: 0.5rem 1rem;
   border-radius: 20px;
@@ -39,7 +48,9 @@
   border: 1px solid #f56565;
 }
 
-/* Main Content */
+/* ========================================
+   MAIN CONTENT
+   ======================================== */
 .main {
   flex: 1;
   padding: 2rem;
@@ -48,7 +59,9 @@
   width: 100%;
 }
 
-/* Balance Card */
+/* ========================================
+   BALANCE CARD - MVP-W1 Main Component
+   ======================================== */
 .balance-card {
   background: white;
   border-radius: 16px;
@@ -66,12 +79,13 @@
   margin-bottom: 1rem;
 }
 
+/* MVP-W1: Display balance in a large, clear component */
 .balance-display {
   margin: 1.5rem 0;
 }
 
 .amount {
-  font-size: 3.5rem;
+  font-size: 3.5rem;  /* Large, clear display */
   font-weight: 700;
   color: #2d3748;
 }
@@ -82,7 +96,9 @@
   margin-left: 0.5rem;
 }
 
-/* Loading State */
+/* ========================================
+   LOADING STATE - MVP-W1 Requirement
+   ======================================== */
 .loading {
   padding: 2rem;
 }
@@ -103,7 +119,9 @@
   }
 }
 
-/* Error State */
+/* ========================================
+   ERROR STATE - MVP-W1 Requirement
+   ======================================== */
 .error {
   background-color: #fff5f5;
   color: #c53030;
@@ -116,7 +134,9 @@
   margin-bottom: 1rem;
 }
 
-/* Buttons */
+/* ========================================
+   BUTTONS
+   ======================================== */
 .refresh-btn,
 .retry-btn {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -135,7 +155,9 @@
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
-/* Info Card */
+/* ========================================
+   INFO CARD
+   ======================================== */
 .info-card {
   background: white;
   border-radius: 16px;
@@ -159,7 +181,9 @@
   overflow-x: auto;
 }
 
-/* Footer */
+/* ========================================
+   FOOTER
+   ======================================== */
 .footer {
   background-color: #2d3748;
   color: #a0aec0;

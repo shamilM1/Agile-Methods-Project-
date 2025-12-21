@@ -40,18 +40,42 @@ class WalletService:
         self, 
         amount: float, 
         transaction_type: str, 
-        description: Optional[str] = None
+        description: Optional[str] = None,
+        date: Optional[str] = None
     ) -> Transaction:
-        """Create a new transaction (income or expense)."""
+        """
+        Create a new transaction (income or expense).
+        
+        MVP-W2: Add Money to Wallet
+        - Inserts row into transactions table
+        - Date defaults to 'now' if not provided
+        """
+        from datetime import datetime
+        
         transaction = Transaction(
             amount=amount,
             type=transaction_type,
-            description=description
+            description=description,
+            created_at=date if date else datetime.utcnow()
         )
         self.db.add(transaction)
         self.db.commit()
         self.db.refresh(transaction)
         return transaction
+    
+    def create_transaction_with_balance(self, amount: float, transaction_type: str, 
+                                        description: Optional[str] = None,
+                                        date: Optional[str] = None) -> dict:
+        """
+        MVP-W2: Create transaction and return it with updated balance.
+        """
+        transaction = self.create_transaction(amount, transaction_type, description, date)
+        balance = self.get_balance()
+        return {
+            "transaction": transaction,
+            "balance": balance,
+            "currency": "EUR"
+        }
 
     def get_transactions(self, limit: int = 100) -> List[Transaction]:
         """Get all transactions, ordered by date (newest first)."""

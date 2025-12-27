@@ -37,26 +37,42 @@ def create_transaction(
     Create a new transaction (income or expense).
     
     MVP-W2: Add Money to Wallet (Income)
+    MVP-W3: Record Expense (Subtract from Wallet)
+    
     - Request body: amount (required), type (required), description (optional), date (optional)
     - Validates: amount > 0, numeric; type must be 'income' or 'expense'
+    - MVP-W3: For expenses, validates sufficient balance (overdraft protection)
     - Returns: created transaction AND updated balance
     
     Example request:
     {
         "amount": 100.00,
-        "type": "income",
-        "description": "Salary",
+        "type": "expense",
+        "description": "Groceries",
         "date": "2025-12-21T10:00:00"  // optional
     }
     
     Example response:
     {
         "transaction": { "id": 1, "amount": 100.0, ... },
-        "balance": 100.0,
+        "balance": 50.0,
         "currency": "EUR"
     }
+    
+    Error (insufficient funds):
+    HTTP 400: {"detail": "Insufficient balance. Current balance: 50.0 EUR"}
     """
     service = WalletService(db)
+    
+    # MVP-W3: Overdraft protection - block expenses exceeding balance
+    if transaction.type.value == "expense":
+        current_balance = service.get_balance()
+        if transaction.amount > current_balance:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Insufficient balance. Current balance: {current_balance} EUR"
+            )
+    
     result = service.create_transaction_with_balance(
         amount=transaction.amount,
         transaction_type=transaction.type.value,

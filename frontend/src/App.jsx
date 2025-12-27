@@ -3,12 +3,14 @@ import './App.css'
 
 /**
  * MVP-W1: View Wallet Balance ✓
- * MVP-W2: Add Money to Wallet (Income)
+ * MVP-W2: Add Money to Wallet (Income) ✓
+ * MVP-W3: Record Expense (Subtract from Wallet)
  * 
- * New features:
- * - Add "Add Income" button on dashboard
- * - Income form with amount, description, date
- * - Client-side validation
+ * Features:
+ * - Dashboard with balance display
+ * - Add Income button and form
+ * - Add Expense button and form (NEW)
+ * - Overdraft protection error handling (NEW)
  * - Success/error feedback
  */
 
@@ -28,7 +30,7 @@ function App() {
   // Error state
   const [error, setError] = useState(null)
 
-  // MVP-W2: Form states
+  // MVP-W2: Income Form states
   const [showIncomeForm, setShowIncomeForm] = useState(false)
   const [formData, setFormData] = useState({
     amount: '',
@@ -38,6 +40,16 @@ function App() {
   const [formError, setFormError] = useState(null)
   const [formLoading, setFormLoading] = useState(false)
   const [successMessage, setSuccessMessage] = useState(null)
+
+  // MVP-W3: Expense Form states
+  const [showExpenseForm, setShowExpenseForm] = useState(false)
+  const [expenseFormData, setExpenseFormData] = useState({
+    amount: '',
+    description: '',
+    date: ''
+  })
+  const [expenseFormError, setExpenseFormError] = useState(null)
+  const [expenseFormLoading, setExpenseFormLoading] = useState(false)
 
   /**
    * Fetch wallet balance from API
@@ -108,6 +120,32 @@ function App() {
   }
 
   /**
+   * MVP-W3: Validate expense form data (client-side)
+   */
+  const validateExpenseForm = () => {
+    // Amount is required
+    if (!expenseFormData.amount || expenseFormData.amount.trim() === '') {
+      setExpenseFormError('Amount is required')
+      return false
+    }
+
+    // Amount must be numeric
+    const amount = parseFloat(expenseFormData.amount)
+    if (isNaN(amount)) {
+      setExpenseFormError('Please enter a valid number')
+      return false
+    }
+
+    // Amount must be > 0
+    if (amount <= 0) {
+      setExpenseFormError('Amount must be greater than 0')
+      return false
+    }
+
+    return true
+  }
+
+  /**
    * MVP-W2: Handle form submission - Add Income
    */
   const handleAddIncome = async (e) => {
@@ -171,6 +209,71 @@ function App() {
   }
 
   /**
+   * MVP-W3: Handle form submission - Record Expense
+   */
+  const handleAddExpense = async (e) => {
+    e.preventDefault()
+    setExpenseFormError(null)
+
+    // Client-side validation
+    if (!validateExpenseForm()) {
+      return
+    }
+
+    setExpenseFormLoading(true)
+
+    try {
+      const requestBody = {
+        amount: parseFloat(expenseFormData.amount),
+        type: 'expense',
+        description: expenseFormData.description || null,
+        date: expenseFormData.date || null
+      }
+
+      const response = await fetch(`${API_URL}/wallet/transactions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody)
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        // MVP-W3: Handle overdraft error from backend
+        throw new Error(errorData.detail || 'Failed to record expense')
+      }
+
+      const data = await response.json()
+
+      // Update balance immediately from response
+      setBalance({
+        balance: data.balance,
+        currency: data.currency
+      })
+
+      // Show success message
+      setSuccessMessage(`✓ Expense of ${data.transaction.amount.toFixed(2)} EUR recorded successfully!`)
+      
+      // Clear form and close
+      setExpenseFormData({ amount: '', description: '', date: '' })
+      setShowExpenseForm(false)
+
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 3000)
+
+    } catch (err) {
+      // This will show "Insufficient balance" error from backend
+      setExpenseFormError(err.message || 'Failed to record expense. Please try again.')
+      console.error('Error recording expense:', err)
+    } finally {
+      setExpenseFormLoading(false)
+    }
+  }
+
+  /**
    * MVP-W2: Handle form input changes
    */
   const handleInputChange = (e) => {
@@ -184,12 +287,34 @@ function App() {
   }
 
   /**
+   * MVP-W3: Handle expense form input changes
+   */
+  const handleExpenseInputChange = (e) => {
+    const { name, value } = e.target
+    setExpenseFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+    // Clear error when user starts typing
+    if (expenseFormError) setExpenseFormError(null)
+  }
+
+  /**
    * MVP-W2: Close form and reset
    */
   const handleCloseForm = () => {
     setShowIncomeForm(false)
     setFormData({ amount: '', description: '', date: '' })
     setFormError(null)
+  }
+
+  /**
+   * MVP-W3: Close expense form and reset
+   */
+  const handleCloseExpenseForm = () => {
+    setShowExpenseForm(false)
+    setExpenseFormData({ amount: '', description: '', date: '' })
+    setExpenseFormError(null)
   }
 
   // Fetch data on load
@@ -209,7 +334,7 @@ function App() {
       </header>
 
       <main className="main">
-        {/* MVP-W2: Success Message */}
+        {/* MVP-W2/W3: Success Message */}
         {successMessage && (
           <div className="success-message">
             {successMessage}
@@ -248,7 +373,7 @@ function App() {
             </div>
           )}
 
-          {/* MVP-W2: Action Buttons */}
+          {/* MVP-W2/W3: Action Buttons */}
           {!loading && !error && (
             <div className="action-buttons">
               <button 
@@ -256,6 +381,12 @@ function App() {
                 className="add-income-btn"
               >
                 ➕ Add Income
+              </button>
+              <button 
+                onClick={() => setShowExpenseForm(true)} 
+                className="add-expense-btn"
+              >
+                ➖ Add Expense
               </button>
               <button onClick={fetchBalance} className="refresh-btn">
                 🔄 Refresh
@@ -339,6 +470,88 @@ function App() {
                     disabled={formLoading}
                   >
                     {formLoading ? 'Adding...' : 'Add Income'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* MVP-W3: Expense Form Modal */}
+        {showExpenseForm && (
+          <div className="modal-overlay" onClick={handleCloseExpenseForm}>
+            <div className="modal expense-modal" onClick={(e) => e.stopPropagation()}>
+              <h2>Record Expense</h2>
+              
+              <form onSubmit={handleAddExpense}>
+                {/* Amount Field - Required */}
+                <div className="form-group">
+                  <label htmlFor="expense-amount">Amount *</label>
+                  <div className="input-with-currency">
+                    <input
+                      type="number"
+                      id="expense-amount"
+                      name="amount"
+                      value={expenseFormData.amount}
+                      onChange={handleExpenseInputChange}
+                      placeholder="0.00"
+                      step="0.01"
+                      min="0.01"
+                      autoFocus
+                    />
+                    <span className="currency-label">EUR</span>
+                  </div>
+                </div>
+
+                {/* Description Field - Optional */}
+                <div className="form-group">
+                  <label htmlFor="expense-description">Description (optional)</label>
+                  <input
+                    type="text"
+                    id="expense-description"
+                    name="description"
+                    value={expenseFormData.description}
+                    onChange={handleExpenseInputChange}
+                    placeholder="e.g., Groceries, Rent, Bills..."
+                    maxLength="255"
+                  />
+                </div>
+
+                {/* Date Field - Optional */}
+                <div className="form-group">
+                  <label htmlFor="expense-date">Date (optional)</label>
+                  <input
+                    type="datetime-local"
+                    id="expense-date"
+                    name="date"
+                    value={expenseFormData.date}
+                    onChange={handleExpenseInputChange}
+                  />
+                </div>
+
+                {/* Form Error - Will show "Insufficient balance" if overdraft */}
+                {expenseFormError && (
+                  <div className="form-error expense-error">
+                    ⚠️ {expenseFormError}
+                  </div>
+                )}
+
+                {/* Form Buttons */}
+                <div className="form-buttons">
+                  <button 
+                    type="button" 
+                    onClick={handleCloseExpenseForm}
+                    className="cancel-btn"
+                    disabled={expenseFormLoading}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit" 
+                    className="submit-btn expense-submit"
+                    disabled={expenseFormLoading}
+                  >
+                    {expenseFormLoading ? 'Recording...' : 'Record Expense'}
                   </button>
                 </div>
               </form>

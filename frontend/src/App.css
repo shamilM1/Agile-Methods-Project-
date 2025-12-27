@@ -1,6 +1,7 @@
 /**
  * MVP-W1: View Wallet Balance - Styles
- * MVP-W2: Add Money to Wallet (Income) - NEW STYLES
+ * MVP-W2: Add Money to Wallet (Income) - Styles
+ * MVP-W3: Record Expense (Subtract from Wallet) - NEW STYLES
  */
 
 .app {
@@ -59,7 +60,7 @@
 }
 
 /* ========================================
-   SUCCESS MESSAGE - MVP-W2
+   SUCCESS MESSAGE - MVP-W2/W3
    ======================================== */
 .success-message {
   background-color: #c6f6d5;
@@ -153,13 +154,14 @@
 }
 
 /* ========================================
-   ACTION BUTTONS - MVP-W2
+   ACTION BUTTONS - MVP-W2/W3
    ======================================== */
 .action-buttons {
   display: flex;
   gap: 1rem;
   justify-content: center;
   margin-top: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .add-income-btn {
@@ -177,6 +179,24 @@
 .add-income-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+}
+
+/* MVP-W3: Add Expense Button - Red/Danger Theme */
+.add-expense-btn {
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  font-weight: 500;
+}
+
+.add-expense-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4);
 }
 
 .refresh-btn,
@@ -198,7 +218,7 @@
 }
 
 /* ========================================
-   MODAL - MVP-W2 Income Form
+   MODAL - MVP-W2 Income Form / MVP-W3 Expense Form
    ======================================== */
 .modal-overlay {
   position: fixed;
@@ -230,8 +250,13 @@
   font-size: 1.5rem;
 }
 
+/* MVP-W3: Expense Modal Title Styling */
+.expense-modal h2 {
+  color: #c53030;
+}
+
 /* ========================================
-   FORM STYLES - MVP-W2
+   FORM STYLES - MVP-W2/W3
    ======================================== */
 .form-group {
   margin-bottom: 1.25rem;
@@ -252,6 +277,7 @@
   border-radius: 8px;
   font-size: 1rem;
   transition: border-color 0.2s;
+  box-sizing: border-box;
 }
 
 .form-group input:focus {
@@ -284,6 +310,12 @@
   border-radius: 8px;
   margin-bottom: 1rem;
   font-size: 0.875rem;
+}
+
+/* MVP-W3: Expense Error - More prominent for overdraft message */
+.expense-error {
+  background-color: #fff5f5;
+  border-left: 4px solid #e53e3e;
 }
 
 /* Form Buttons */
@@ -325,6 +357,15 @@
 .submit-btn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+}
+
+/* MVP-W3: Expense Submit Button - Red Theme */
+.expense-submit {
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+}
+
+.expense-submit:hover:not(:disabled) {
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4);
 }
 
 .submit-btn:disabled,

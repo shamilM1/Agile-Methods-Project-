@@ -83,7 +83,25 @@ def create_transaction(
 
 
 @router.get("/transactions", response_model=List[TransactionResponse])
-def get_transactions(limit: int = 100, db: Session = Depends(get_db)):
-    """Get transaction history (newest first)."""
+def get_transactions(
+    limit: int = 100, 
+    offset: int = 0,
+    db: Session = Depends(get_db)
+):
+    """
+    Get transaction history (newest first).
+    
+    MVP-W4: View Wallet Transaction History
+    - Returns list of all transactions
+    - Sorted by created_at descending (most recent first)
+    - Supports pagination via limit and offset parameters
+    
+    Query Parameters:
+        limit: Maximum number of transactions to return (default: 100)
+        offset: Number of transactions to skip (default: 0)
+    
+    Example: GET /wallet/transactions?limit=10&offset=0 (first page)
+             GET /wallet/transactions?limit=10&offset=10 (second page)
+    """
     service = WalletService(db)
-    return service.get_transactions(limit=limit)
+    return service.get_transactions(limit=limit, offset=offset)

@@ -77,8 +77,14 @@ class WalletService:
             "currency": "EUR"
         }
 
-    def get_transactions(self, limit: int = 100) -> List[Transaction]:
-        """Get all transactions, ordered by date (newest first)."""
+    def get_transactions(self, limit: int = 100, offset: int = 0) -> List[Transaction]:
+        """
+        Get all transactions, ordered by date (newest first).
+        
+        MVP-W4: View Wallet Transaction History
+        - Supports pagination with limit and offset
+        - Default: returns first 100 transactions
+        """
         return self.db.query(Transaction).order_by(
             Transaction.created_at.desc()
-        ).limit(limit).all()
+        ).offset(offset).limit(limit).all()

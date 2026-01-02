@@ -4,13 +4,14 @@ import './App.css'
 /**
  * MVP-W1: View Wallet Balance ✓
  * MVP-W2: Add Money to Wallet (Income) ✓
- * MVP-W3: Record Expense (Subtract from Wallet)
+ * MVP-W3: Record Expense (Subtract from Wallet) ✓
+ * MVP-W4: View Wallet Transaction History (NEW)
  * 
  * Features:
  * - Dashboard with balance display
  * - Add Income button and form
- * - Add Expense button and form (NEW)
- * - Overdraft protection error handling (NEW)
+ * - Add Expense button and form
+ * - Transaction History section (NEW)
  * - Success/error feedback
  */
 
@@ -51,6 +52,12 @@ function App() {
   const [expenseFormError, setExpenseFormError] = useState(null)
   const [expenseFormLoading, setExpenseFormLoading] = useState(false)
 
+  // MVP-W4: Transaction History states
+  const [transactions, setTransactions] = useState([])
+  const [transactionsLoading, setTransactionsLoading] = useState(false)
+  const [transactionsError, setTransactionsError] = useState(null)
+  const [showHistory, setShowHistory] = useState(false)
+
   /**
    * Fetch wallet balance from API
    */
@@ -73,6 +80,30 @@ function App() {
       console.error('Error fetching balance:', err)
     } finally {
       setLoading(false)
+    }
+  }
+
+  /**
+   * MVP-W4: Fetch transaction history from API
+   */
+  const fetchTransactions = async () => {
+    try {
+      setTransactionsLoading(true)
+      setTransactionsError(null)
+      
+      const response = await fetch(`${API_URL}/wallet/transactions?limit=100`)
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch transactions')
+      }
+      
+      const data = await response.json()
+      setTransactions(data)
+    } catch (err) {
+      setTransactionsError('Could not load transaction history.')
+      console.error('Error fetching transactions:', err)
+    } finally {
+      setTransactionsLoading(false)
     }
   }
 
@@ -188,6 +219,11 @@ function App() {
         currency: data.currency
       })
 
+      // MVP-W4: Refresh transactions list if history is visible
+      if (showHistory) {
+        fetchTransactions()
+      }
+
       // Show success message
       setSuccessMessage(`✓ Income of ${data.transaction.amount.toFixed(2)} EUR added successfully!`)
       
@@ -252,6 +288,11 @@ function App() {
         currency: data.currency
       })
 
+      // MVP-W4: Refresh transactions list if history is visible
+      if (showHistory) {
+        fetchTransactions()
+      }
+
       // Show success message
       setSuccessMessage(`✓ Expense of ${data.transaction.amount.toFixed(2)} EUR recorded successfully!`)
       
@@ -315,6 +356,31 @@ function App() {
     setShowExpenseForm(false)
     setExpenseFormData({ amount: '', description: '', date: '' })
     setExpenseFormError(null)
+  }
+
+  /**
+   * MVP-W4: Toggle transaction history visibility
+   */
+  const toggleHistory = () => {
+    if (!showHistory) {
+      // Fetch transactions when opening history
+      fetchTransactions()
+    }
+    setShowHistory(!showHistory)
+  }
+
+  /**
+   * MVP-W4: Format date for display
+   */
+  const formatDate = (dateString) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
   }
 
   // Fetch data on load
@@ -391,6 +457,76 @@ function App() {
               <button onClick={fetchBalance} className="refresh-btn">
                 🔄 Refresh
               </button>
+            </div>
+          )}
+        </section>
+
+        {/* MVP-W4: Transaction History Section */}
+        <section className="history-section">
+          <button 
+            onClick={toggleHistory} 
+            className="history-toggle-btn"
+          >
+            {showHistory ? '📋 Hide History' : '📋 View History'}
+          </button>
+
+          {showHistory && (
+            <div className="history-container">
+              <h3>Transaction History</h3>
+              
+              {/* Loading state */}
+              {transactionsLoading && (
+                <div className="history-loading">
+                  <div className="spinner"></div>
+                  <p>Loading transactions...</p>
+                </div>
+              )}
+
+              {/* Error state */}
+              {transactionsError && (
+                <div className="history-error">
+                  <p>⚠️ {transactionsError}</p>
+                  <button onClick={fetchTransactions} className="retry-btn">
+                    Retry
+                  </button>
+                </div>
+              )}
+
+              {/* Empty state */}
+              {!transactionsLoading && !transactionsError && transactions.length === 0 && (
+                <div className="history-empty">
+                  <p>📭 No transactions yet</p>
+                  <p className="empty-hint">Add income or expenses to see them here.</p>
+                </div>
+              )}
+
+              {/* Transaction list */}
+              {!transactionsLoading && !transactionsError && transactions.length > 0 && (
+                <div className="transaction-list">
+                  {transactions.map((transaction) => (
+                    <div 
+                      key={transaction.id} 
+                      className={`transaction-item ${transaction.type}`}
+                    >
+                      <div className="transaction-icon">
+                        {transaction.type === 'income' ? '💵' : '💸'}
+                      </div>
+                      <div className="transaction-details">
+                        <div className="transaction-description">
+                          {transaction.description || (transaction.type === 'income' ? 'Income' : 'Expense')}
+                        </div>
+                        <div className="transaction-date">
+                          {formatDate(transaction.created_at)}
+                        </div>
+                      </div>
+                      <div className={`transaction-amount ${transaction.type}`}>
+                        {transaction.type === 'income' ? '+' : '-'}
+                        {transaction.amount.toFixed(2)} EUR
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </section>

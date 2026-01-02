@@ -1,7 +1,8 @@
 /**
  * MVP-W1: View Wallet Balance - Styles
  * MVP-W2: Add Money to Wallet (Income) - Styles
- * MVP-W3: Record Expense (Subtract from Wallet) - NEW STYLES
+ * MVP-W3: Record Expense (Subtract from Wallet) - Styles
+ * MVP-W4: View Wallet Transaction History - NEW STYLES
  */
 
 .app {
@@ -215,6 +216,134 @@
 .retry-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* ========================================
+   MVP-W4: TRANSACTION HISTORY SECTION
+   ======================================== */
+.history-section {
+  margin-bottom: 1.5rem;
+}
+
+.history-toggle-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+  color: white;
+  border: none;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.history-toggle-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
+}
+
+.history-container {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-top: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.3s ease-in;
+}
+
+.history-container h3 {
+  color: #2d3748;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.history-loading,
+.history-error,
+.history-empty {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #718096;
+}
+
+.history-empty p {
+  margin-bottom: 0.5rem;
+}
+
+.history-empty .empty-hint {
+  font-size: 0.875rem;
+  color: #a0aec0;
+}
+
+.history-error {
+  background-color: #fff5f5;
+  color: #c53030;
+  border-radius: 8px;
+}
+
+/* Transaction List */
+.transaction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.transaction-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f7fafc;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.transaction-item:hover {
+  background: #edf2f7;
+}
+
+.transaction-item.income {
+  border-left: 4px solid #48bb78;
+}
+
+.transaction-item.expense {
+  border-left: 4px solid #e53e3e;
+}
+
+.transaction-icon {
+  font-size: 1.5rem;
+}
+
+.transaction-details {
+  flex: 1;
+}
+
+.transaction-description {
+  font-weight: 500;
+  color: #2d3748;
+  margin-bottom: 0.25rem;
+}
+
+.transaction-date {
+  font-size: 0.75rem;
+  color: #a0aec0;
+}
+
+.transaction-amount {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.transaction-amount.income {
+  color: #38a169;
+}
+
+.transaction-amount.expense {
+  color: #e53e3e;
 }
 
 /* ========================================

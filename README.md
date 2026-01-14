@@ -128,7 +128,9 @@ You should see:
 - 💰 Wallet Management header
 - Green "API: ✓ Connected" badge
 - Current balance display (0.00 EUR if fresh database)
-- Refresh button
+- Add Money form (income)
+- Record Expense form
+- Transaction History section (toggle to show/hide)
 
 ---
 
@@ -200,12 +202,12 @@ curl http://localhost:8000/wallet/balance
 
 ## 📡 API Reference
 
-| Method | Endpoint | Description | Request Body |
+| Method | Endpoint | Description | Query Params |
 |--------|----------|-------------|--------------|
 | GET | `/health` | Health check | - |
 | GET | `/wallet/balance` | Get current balance | - |
-| POST | `/wallet/transactions` | Create transaction | `{amount, type, description}` |
-| GET | `/wallet/transactions` | Get all transactions | - |
+| POST | `/wallet/transactions` | Create transaction (income/expense) | - |
+| GET | `/wallet/transactions` | Get transaction history | `limit`, `offset` |
 
 ### Request/Response Examples
 
@@ -219,7 +221,7 @@ curl http://localhost:8000/wallet/balance
 {"balance": 74.5, "currency": "EUR"}
 ```
 
-#### POST /wallet/transactions
+#### POST /wallet/transactions (Income)
 Request:
 ```json
 {
@@ -239,7 +241,21 @@ Response:
 }
 ```
 
-#### GET /wallet/transactions
+#### POST /wallet/transactions (Expense with Overdraft Protection)
+Request (when balance is 50 EUR):
+```json
+{
+  "amount": 100.00,
+  "type": "expense",
+  "description": "Shopping"
+}
+```
+Response (HTTP 400):
+```json
+{"detail": "Insufficient balance. Current balance: 50.0 EUR"}
+```
+
+#### GET /wallet/transactions?limit=10&offset=0
 ```json
 [
   {"id": 2, "amount": 25.5, "type": "expense", "description": "Groceries", "created_at": "..."},
@@ -253,29 +269,35 @@ Response:
 
 ---
 
-## ✅ Completed Features (MVP-T1: Project Setup)
+## ✅ Completed Features
 
-### Backend ✓
-- [x] FastAPI project with clear structure (app, routes, models, services)
+### MVP-W1: View Wallet Balance ✓
+- [x] FastAPI backend with clear structure (app, routes, models, services)
 - [x] SQLite database auto-created and connected
 - [x] `/health` endpoint returning `{"status": "ok"}`
-- [x] Basic logging and structured JSON error handling
-- [x] CORS enabled for frontend connection
-- [x] Transaction model (id, amount, type, description, created_at)
-- [x] Wallet balance calculation (income - expenses)
-
-### Frontend ✓
-- [x] React + Vite project setup
-- [x] Dashboard page with wallet balance display
+- [x] GET `/wallet/balance` endpoint
+- [x] React dashboard with wallet balance display
 - [x] API health status indicator
-- [x] Loading spinner while fetching
-- [x] Error state with retry button
-- [x] Refresh button for manual update
+- [x] Loading spinner and error states
 
-### Next Steps (To Do)
-- [ ] Add transaction form (income/expense)
-- [ ] Transaction history list view
-- [ ] Delete transaction functionality
+### MVP-W2: Add Money (Income) ✓
+- [x] POST `/wallet/transactions` endpoint for income
+- [x] Add Money form in frontend
+- [x] Real-time balance update after adding income
+- [x] Form validation and success/error feedback
+
+### MVP-W3: Record Expense ✓
+- [x] Expense recording via POST `/wallet/transactions`
+- [x] **Overdraft protection** - prevents spending more than balance
+- [x] Record Expense form in frontend
+- [x] Clear error messages for insufficient balance
+
+### MVP-W4: Transaction History ✓
+- [x] GET `/wallet/transactions` with pagination (limit/offset)
+- [x] Transactions sorted by date (newest first)
+- [x] Transaction history section in frontend
+- [x] Show/Hide toggle for transaction list
+- [x] Visual distinction between income (+) and expense (-)
 
 ---
 
